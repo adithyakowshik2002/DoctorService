@@ -34,12 +34,16 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
-
-
-
-
-
-
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<ErrorDetails> handleGenericException(InvalidDateException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                "Enter date correctly",
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGenericException(Exception ex) {
         ErrorDetails errorDetails = new ErrorDetails(
@@ -50,4 +54,11 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+
+
+
+
+
 }

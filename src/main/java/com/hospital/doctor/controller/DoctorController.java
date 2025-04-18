@@ -1,7 +1,7 @@
 package com.hospital.doctor.controller;
 
 import com.hospital.doctor.dto.*;
-import com.hospital.doctor.service.IDocterService;
+import com.hospital.doctor.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DoctorController {
 
-    private final IDocterService doctorService;
+    private final DoctorService doctorService;
 
 
     @PostMapping
@@ -91,10 +91,10 @@ public class DoctorController {
     }
 
     @GetMapping("/doctor/{id}/{date}/available-slots")
-    public ResponseEntity<Map<LocalTime, Boolean>> getAvailableSlots(
+    public ResponseEntity<Map<LocalTime, String>> getAvailableSlots(
             @PathVariable Long id,
             @PathVariable LocalDate date) {
-        Map<LocalTime, Boolean> availableSlots = doctorService.getAvailableSlots(id, date);
+        Map<LocalTime, String> availableSlots = doctorService.getAvailableSlots(id, date);
         return ResponseEntity.ok(availableSlots);
     }
 

@@ -29,12 +29,10 @@ public class DoctorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
     @Column(name = "profile_image")
     private byte[] profileImage;
 
     @Column(name="Doctor_name")
-    @NotNull(message = "name should not be null")
     private String name;
 
     @Column(columnDefinition = "TEXT")
@@ -56,7 +54,7 @@ public class DoctorEntity {
 
 
     @Column
-    @NotNull(message = "available from should not be null")
+//    @NotNull(message = "available from should not be null")
     private LocalTime availableFrom;
 
     @Column
