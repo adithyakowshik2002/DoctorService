@@ -1,20 +1,27 @@
 package com.hospital.doctor.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
-
-import com.hospital.doctor.enums.PatientType;
-import lombok.*;
-
-
-@Builder
-@Getter
-@Setter
+/**
+ * Returned when fetching a doctor's schedules
+ */
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Builder
 public class ScheduleResponseDto {
-    String day;
-    String time;
-    PatientType patientType;
+    private Long scheduleId;
+    private LocalTime availableFrom;
+    private LocalTime availableTo;
+    private List<String> availableDates;
+    @Builder.Default
+    private List<BookedSlotResponse> bookedSlots=new ArrayList<>();
 }

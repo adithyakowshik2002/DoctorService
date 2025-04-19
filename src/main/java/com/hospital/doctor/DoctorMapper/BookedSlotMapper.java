@@ -1,5 +1,6 @@
 package com.hospital.doctor.DoctorMapper;
 
+import com.hospital.doctor.config.ModelMapperConfig;
 import com.hospital.doctor.dto.BookedSlotRequest;
 import com.hospital.doctor.dto.BookedSlotResponse;
 import com.hospital.doctor.dto.ScheduleRequestDto;
@@ -23,5 +24,8 @@ public class BookedSlotMapper {
 
     public BookedSlotResponse toResponse(BookedSlotEntity entity){
         return modelMapper.map(entity,BookedSlotResponse.class);
+    }
+    public BookedSlotRequest toRequest(BookedSlotEntity entity){
+        return modelMapper.map(entity,BookedSlotRequest.class);
     }
 }

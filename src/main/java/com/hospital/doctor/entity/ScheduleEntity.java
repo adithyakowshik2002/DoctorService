@@ -1,12 +1,16 @@
 package com.hospital.doctor.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.hospital.doctor.enums.PatientType;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+
+import java.util.List;
 
 
 @Builder
@@ -18,23 +22,24 @@ import java.util.Set;
 public class ScheduleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column
-    private String day;
-
-    @Column(name = "time_slot")
-    private String time;
+    private Long scheduleId;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id")
+    @JoinColumn(name = "doctor_id", nullable = false)
     @JsonBackReference
-    private DoctorEntity doctorEntitySchedule;
+    private DoctorEntity doctor;
 
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "patient_type", nullable = false)
-    private PatientType patientType;
 
+    @Column(nullable = false)
+    private LocalTime availableFrom;
+
+    @Column(nullable = false)
+    private LocalTime availableTo;
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @Builder.Default
+    private List<ScheduleDateEntity> availableDates = new ArrayList<>();
 
 }

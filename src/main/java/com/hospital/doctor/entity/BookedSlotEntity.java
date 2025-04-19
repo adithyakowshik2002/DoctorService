@@ -23,22 +23,22 @@ public class BookedSlotEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long bookedSlotId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JsonBackReference
+    @ManyToOne
     @JoinColumn(name = "doctor_id")
+    @JsonBackReference
     private DoctorEntity doctorEntity;
 
+    @Column(nullable = false)
     private LocalDate slotDate;
 
-    @Column
+    @Column(nullable = false)
     private LocalTime slotStartTime;
 
-    @Column
+    @Column(nullable = false)
     private LocalTime slotEndTime;
 
+    @Column
+    private boolean isBooked; //
 
 
-    @Transient
-    @Builder.Default
-    private boolean slotAvailable = true;
 }

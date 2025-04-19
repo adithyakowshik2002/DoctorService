@@ -1,28 +1,26 @@
 package com.hospital.doctor.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.hospital.doctor.entity.DoctorEntity;
-import com.hospital.doctor.entity.ScheduleEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
+/**
+ * POST /booked‑slots
+ * { "scheduleId": 5, "slotDate": "2025-04-21", "slotStartTime": "09:00", "slotEndTime": "09:15" }
+ */
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BookedSlotRequest {
-    private LocalDate slotDate;
+    private Long scheduleId;
+    private String slotDate;
     private LocalTime slotStartTime;
     private LocalTime slotEndTime;
-
+    private Boolean isBooked;
 }
+
 
 

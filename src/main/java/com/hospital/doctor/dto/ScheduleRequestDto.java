@@ -1,21 +1,26 @@
 package com.hospital.doctor.dto;
-import com.hospital.doctor.enums.PatientType;
-import jakarta.validation.constraints.*;
-import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
+import com.hospital.doctor.entity.ScheduleDateEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Create or update a schedule with multiple available dates
+ */
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ScheduleRequestDto {
-    @NotBlank(message = "Day is required")
-    String day;
-
-    @NotBlank(message = "Time slot is required")
-    @Pattern(regexp = "^\\d{2}:\\d{2}-\\d{2}:\\d{2}$", message = "Invalid time format (HH:MM-HH:MM)")
-    String time;
-
-    @NotNull(message = "Patient type is required")
-    PatientType patientType;
+    private LocalTime availableFrom;          // e.g. 09:00
+    private LocalTime availableTo;
+    @Builder.Default// e.g. 12:00
+    private List<ScheduleDateDto> availableDates=new ArrayList<>();   // e.g. ["2025-04-21", "2025-04-23"]
 }

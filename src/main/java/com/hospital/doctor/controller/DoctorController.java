@@ -106,13 +106,6 @@ public class DoctorController {
         return ResponseEntity.ok("Availability updated successfully.");
     }
 
-    @GetMapping("/doctor/{id}/{date}/booked-slots")
-    public ResponseEntity<List<BookedSlotResponse>> getBookedSlots(
-            @PathVariable Long id,
-            @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) throws IllegalAccessException {
-        List<BookedSlotResponse> bookedSlots = doctorService.getBookedSlotTimes(id, date);
-        return ResponseEntity.ok(bookedSlots);
-    }
 
 
 }

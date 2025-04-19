@@ -22,4 +22,7 @@ public class ScheduleMapper {
     public ScheduleResponseDto toResponse(DoctorEntity entity){
         return modelMapper.map(entity,ScheduleResponseDto.class);
     }
+    public ScheduleRequestDto toResponseScheduleDto(ScheduleEntity entity){
+        return modelMapper.map(entity,ScheduleRequestDto.class);
+    }
 }

@@ -32,7 +32,7 @@ public interface DoctorService {
 
     void setDoctorAvailability(Long doctorId, DoctorAvailabilityRequest request);
 
-    List<BookedSlotResponse> getBookedSlotTimes(Long id, LocalDate date) throws IllegalAccessException;
 
-    Map<LocalTime, String> getAvailableSlots(Long doctorId, LocalDate date);
+
+    Map<LocalTime,String> getAvailableSlots(Long doctorId, LocalDate date);
 }

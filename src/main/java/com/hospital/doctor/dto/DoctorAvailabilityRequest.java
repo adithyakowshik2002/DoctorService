@@ -9,8 +9,13 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class DoctorAvailabilityRequest {
+    private Long doctorId;
+    private String availableDate;
     private LocalTime availableFrom;
     private LocalTime availableTo;
-    private LocalDate availableDate;
+
+   
 }
+

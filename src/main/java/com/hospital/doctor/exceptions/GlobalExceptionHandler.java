@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(InvalidDateException.class)
-    public ResponseEntity<ErrorDetails> handleGenericException(InvalidDateException ex) {
+    public ResponseEntity<ErrorDetails> handleInvalidDateException(InvalidDateException ex) {
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
                 HttpStatus.NOT_ACCEPTABLE.value(),
@@ -44,6 +44,40 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
     }
+
+    @ExceptionHandler(ImageInvalidException.class)
+    public ResponseEntity<ErrorDetails> handleImageInvalidException(ImageInvalidException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                "Image is Invalid",
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(SlotNotAvailableException.class)
+    public ResponseEntity<ErrorDetails> handleSlotNotAvailableException(SlotNotAvailableException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Slot not avialable",
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidInputException(InvalidInputException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                LocalDateTime.now(),
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                "Enter details correctly",
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_ACCEPTABLE);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGenericException(Exception ex) {
         ErrorDetails errorDetails = new ErrorDetails(
