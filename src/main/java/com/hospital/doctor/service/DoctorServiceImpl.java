@@ -272,7 +272,6 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-
     public DoctorResponseDto updateDoctor(Long id, DoctorRequestDto request) {
         DoctorEntity existing = doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor with ID " + id + " not found"));
