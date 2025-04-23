@@ -20,7 +20,6 @@ public class AvailableScheduleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scheduleId;
 
-
     @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "available_date_id", nullable = false)
