@@ -4,7 +4,6 @@ package com.hospital.doctor.dto;
  * Payload to create or update a doctor (with schedules)
  */
 
-import com.hospital.doctor.entity.BookedSlotEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,8 +26,12 @@ public class DoctorRequestDto {
     private String location;
     private String profileImage;
     @Builder.Default // Base64 or URL
-    private List<ScheduleRequestDto> schedules=new ArrayList<>();
+    private List<AvailableScheduleDto> schedules=new ArrayList<>();
 
     @Builder.Default
-    private List<BookedSlotRequest> bookedSlotDto=new ArrayList<>();
+    private List<BookedSlotDTO> bookedSlotDto=new ArrayList<>();
+
+
+    @Builder.Default
+    private List<AvailableDateDto> availableDateDto =new ArrayList<>();
 }

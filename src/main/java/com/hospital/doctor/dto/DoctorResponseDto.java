@@ -3,7 +3,6 @@ package com.hospital.doctor.dto;
 
 
 
-import com.hospital.doctor.entity.ScheduleDateEntity;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,8 +26,10 @@ public class DoctorResponseDto {
     private String profileImage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    @Builder.Default
-    private List<ScheduleResponseDto> schedules=new ArrayList<>();
-    @Builder.Default
-    private List<BookedSlotResponse> BookedSlotResponse=new ArrayList<>();
+//    @Builder.Default
+//    private List<ScheduleResponseDto> schedules=new ArrayList<>();
+//    @Builder.Default
+//    private List<BookedSlotDTO> BookedSlotResponse=new ArrayList<>();
+
+
 }

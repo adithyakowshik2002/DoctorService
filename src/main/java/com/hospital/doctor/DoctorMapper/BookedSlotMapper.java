@@ -1,16 +1,13 @@
 package com.hospital.doctor.DoctorMapper;
 
-import com.hospital.doctor.config.ModelMapperConfig;
-import com.hospital.doctor.dto.BookedSlotRequest;
-import com.hospital.doctor.dto.BookedSlotResponse;
-import com.hospital.doctor.dto.ScheduleRequestDto;
-import com.hospital.doctor.dto.ScheduleResponseDto;
+import com.hospital.doctor.dto.BookedSlotDTO;
+
 import com.hospital.doctor.entity.BookedSlotEntity;
-import com.hospital.doctor.entity.DoctorEntity;
-import com.hospital.doctor.entity.ScheduleEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class BookedSlotMapper {
@@ -18,14 +15,15 @@ public class BookedSlotMapper {
     @Autowired
     private ModelMapper modelMapper;
 
-    public BookedSlotEntity toEntity(BookedSlotRequest request){
+    public BookedSlotEntity toEntity(BookedSlotDTO request){
         return modelMapper.map(request, BookedSlotEntity.class);
     }
 
-    public BookedSlotResponse toResponse(BookedSlotEntity entity){
-        return modelMapper.map(entity,BookedSlotResponse.class);
+    public BookedSlotDTO toResponse(BookedSlotEntity entity){
+        return modelMapper.map(entity,BookedSlotDTO.class);
     }
-    public BookedSlotRequest toRequest(BookedSlotEntity entity){
-        return modelMapper.map(entity,BookedSlotRequest.class);
+    public List<BookedSlotDTO> toResponse(List<BookedSlotEntity> entity){
+        return entity.stream().map(this::toResponse).toList();
     }
 }
+

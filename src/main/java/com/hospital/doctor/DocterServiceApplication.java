@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaAuditing
 @SpringBootApplication
 @EnableDiscoveryClient
-//@EnableJpaRepositories (basePackages = "com.hospital.doctor.repository")
+
 public class DocterServiceApplication {
 
 	public static void main(String[] args) {

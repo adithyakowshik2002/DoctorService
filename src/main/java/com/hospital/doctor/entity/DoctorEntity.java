@@ -12,10 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @Entity
@@ -40,8 +37,8 @@ public class DoctorEntity {
     @Column(columnDefinition = "TEXT")
     private String qualifications;
 
-    @Column(name = "registration_number", unique = true, nullable = false)
-    private String registrationNumber;
+    @Column(name = "registration_number", nullable = false, unique = true)
+    private UUID registrationNumber;
 
     @Column(nullable = false)
     private String specialization;
@@ -55,17 +52,6 @@ public class DoctorEntity {
     @Column
     private String location;
 
-
-    @OneToMany(mappedBy = "doctorEntity", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    @Builder.Default
-    private List<BookedSlotEntity> bookedSlotEntities = new ArrayList<>();
-
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    @Builder.Default
-    private List<ScheduleEntity> schedules = new ArrayList<>();
-
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -74,7 +60,10 @@ public class DoctorEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-
+    @OneToMany
+    @JsonManagedReference
+    @Builder.Default
+    private List<AvailableDateEntity> availableSchedules = new ArrayList<>();
 
 
 }

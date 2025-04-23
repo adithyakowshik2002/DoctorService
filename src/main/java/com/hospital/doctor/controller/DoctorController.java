@@ -5,16 +5,14 @@ import com.hospital.doctor.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/doctors")
@@ -26,8 +24,8 @@ public class DoctorController {
 
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createDoctor(@RequestBody DoctorRequestDto request) {
-       DoctorResponseDto response = doctorService.createDoctor(request);
+    public ResponseEntity<DoctorResponseDto> createDoctor(@RequestBody DoctorRequestDto request) {
+        DoctorResponseDto response = doctorService.createDoctor(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -86,26 +84,31 @@ public class DoctorController {
 
     @GetMapping("/getbyregno/{regNo}")
     public ResponseEntity<DoctorResponseDto> getDoctorbaseonRegNo(String regNo) {
-       DoctorResponseDto response= doctorService.getDoctorByRegistrationNumber(regNo);
+        DoctorResponseDto response= doctorService.getDoctorByRegistrationNumber(regNo);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/doctor/{id}/{date}/available-slots")
-    public ResponseEntity<Map<LocalTime, String>> getAvailableSlots(
-            @PathVariable Long id,
-            @PathVariable LocalDate date) {
-        Map<LocalTime, String> availableSlots = doctorService.getAvailableSlots(id, date);
+    @GetMapping("/doctor/{id}/available-slots")
+    public ResponseEntity<List<AvailableDateDto>> getAvailableSlots( @PathVariable Long id) {
+        List<AvailableDateDto> availableSlots = doctorService.getAvailableDates(id);
         return ResponseEntity.ok(availableSlots);
     }
 
-    @PutMapping("/doctor/{id}/set-availability")
-    public ResponseEntity<String> setAvailability(
+    @PostMapping("/doctor/{id}/set-availability")
+    public ResponseEntity<AvailableDateDto> setAvailability(
             @PathVariable Long id,
-            @RequestBody DoctorAvailabilityRequest request) {
-        doctorService.setDoctorAvailability(id, request);
-        return ResponseEntity.ok("Availability updated successfully.");
+            @RequestBody AvailableDateDto request) {
+        AvailableDateDto availableDateDto=doctorService.setDoctorAvailability(id, request);
+        return ResponseEntity.ok(availableDateDto);
     }
 
+    @GetMapping("/schedules")
+    public ResponseEntity<List<AvailableDateDto>> getAvailableSchedules(
+            @RequestParam Long doctorId) {
+        List<AvailableDateDto> availableScheduleDtoList=doctorService.getAvailableDates(doctorId);
+        return new ResponseEntity<>(availableScheduleDtoList,
+                HttpStatus.OK);
+    }
 
 
 }

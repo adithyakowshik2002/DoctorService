@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
+
 
 @Repository
 public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
@@ -13,7 +15,7 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
 
     List<DoctorEntity> findByName(String name);
 
-    DoctorEntity findByRegistrationNumber(String registrationNumber);
+    DoctorEntity findByRegistrationNumber(UUID registrationNumber);
 
 
 }

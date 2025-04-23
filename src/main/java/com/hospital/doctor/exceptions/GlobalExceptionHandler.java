@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(DoctorNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleDoctorNotFound(DoctorNotFoundException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleDoctorNotFound(NotFoundException ex) {
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),

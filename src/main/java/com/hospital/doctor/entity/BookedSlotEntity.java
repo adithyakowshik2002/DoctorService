@@ -1,14 +1,13 @@
 package com.hospital.doctor.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+
 
 @Entity
 @AllArgsConstructor
@@ -24,9 +23,9 @@ public class BookedSlotEntity {
     private long bookedSlotId;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id")
+    @JoinColumn(name = "schedule_id")
     @JsonBackReference
-    private DoctorEntity doctorEntity;
+    private AvailableScheduleEntity availableScheduleEntity;
 
     @Column(nullable = false)
     private LocalDate slotDate;
@@ -38,7 +37,11 @@ public class BookedSlotEntity {
     private LocalTime slotEndTime;
 
     @Column
-    private boolean isBooked; //
+    private Long patientId;
+
+    @Column(unique = true)
+    @NonNull
+    private String status;
 
 
 }
