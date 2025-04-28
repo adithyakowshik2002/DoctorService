@@ -110,5 +110,4 @@ public class DoctorController {
                 HttpStatus.OK);
     }
 
-
 }

@@ -23,15 +23,6 @@ public class AvailableDateServiceImpl implements AvailableDateService {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-//    @Override
-//    public List<AvailableDateDto> getAvailableDatesByDoctorId(Long doctorId) {
-//        List<AvailableDateEntity> entities = availableDateRepository.findByDoctorId(doctorId);
-//        return entities.stream()
-//                .map(e -> AvailableDateDto.builder()
-//                        .availableDate(e.getAvailableDate().format(formatter))
-//                        .build())
-//                .collect(Collectors.toList());
-//    }
 
         @Override
     public List<SlotAvailableDto> getAvailableDatesByDoctorId(Long doctorId) {

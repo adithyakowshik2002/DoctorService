@@ -3,6 +3,7 @@ package com.hospital.doctor.service.impl;
 
 import com.hospital.doctor.DoctorMapper.BookedSlotMapper;
 import com.hospital.doctor.dto.BookedSlotDTO;
+import com.hospital.doctor.dto.SlotBookedDTO;
 import com.hospital.doctor.dto.SlotTimeDto;
 import com.hospital.doctor.entity.AvailableScheduleEntity;
 import com.hospital.doctor.entity.BookedSlotEntity;
@@ -10,7 +11,6 @@ import com.hospital.doctor.repository.AvailableScheduleRepository;
 import com.hospital.doctor.repository.BookedSlotRepository;
 import com.hospital.doctor.service.BookedSlotService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -54,7 +54,7 @@ private final AvailableScheduleRepository availableScheduleRepository;
         List<BookedSlotEntity> bookedSlots = bookedSlotRepository.findByDoctorIdAndSlotDate(doctorId, date);
         List<SlotTimeDto> bookedStartTimes = bookedSlots.stream()
                 .map(s->new SlotTimeDto(s.getSlotStartTime().toString()))
-                .collect(Collectors.toList());
+                .toList();
 
         // 2. Fetch all schedules for the given date
         List<AvailableScheduleEntity> schedules = availableScheduleRepository
@@ -78,35 +78,34 @@ private final AvailableScheduleRepository availableScheduleRepository;
         return availableSlots;
     }
 
-//    @Override
-//    public List<BookedSlotDTO> fetchAvailableSlots(Long doctorId, LocalDate date) {
-//        // Fetch all slots for the doctor on the given date
-//        List<BookedSlotEntity> allSlots = bookedSlotRepository.findByDoctorIdAndSlotDate(doctorId, date);
-//
-//        // Filter slots with status "AVAILABLE"
-//        return bookedSlotMapper.toResponse(allSlots).stream()
-//                .filter(slot -> "AVAILABLE".equalsIgnoreCase(slot.getStatus()))
-//                .map(slot -> new BookedSlotDTO(
-//
-//                        slot.getSlotDate(),
-//                        slot.getSlotStartTime(),
-//                        slot.getSlotEndTime(),
-//                        slot.getStatus()
-//                ))
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public List<SlotTimeDto> fetchAvailableSlotTimings(Long doctorId, LocalDate date) {
-//        // Fetch all slots for the doctor on the given date
-//        List<BookedSlotEntity> allSlots = bookedSlotRepository.findByDoctorIdAndSlotDate(doctorId, date);
-//
-//        // Filter slots with status "AVAILABLE" and map to SlotTimeDTO
-//        return allSlots.stream()
-//                .filter(slot -> "AVAILABLE".equalsIgnoreCase(slot.getStatus()))
-//                .map(slot -> new SlotTimeDto(slot.getSlotStartTime().toString()))
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public void bookSlot(SlotBookedDTO request) {
+
+        AvailableScheduleEntity schedule = availableScheduleRepository.findById(request.getScheduleId())
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found for ID: " + request.getScheduleId()));
+
+        // 1. Duplicate check
+        boolean alreadyBooked = bookedSlotRepository.existsByAvailableScheduleEntityAndSlotDateAndSlotStartTime(
+                schedule,
+                LocalDate.parse(request.getSlotDate()),
+                LocalTime.parse(request.getSlotStartTime())
+        );
+
+        if (alreadyBooked) {
+            throw new IllegalStateException("This slot is already booked. Please choose another time.");
+        }
+
+        // 2. Save booking
+        BookedSlotEntity bookedSlot = BookedSlotEntity.builder()
+                .availableScheduleEntity(schedule)
+                .slotDate(LocalDate.parse(request.getSlotDate()))
+                .slotStartTime(LocalTime.parse(request.getSlotStartTime()))
+                .slotEndTime(LocalTime.parse(request.getSlotStartTime()).plusMinutes(15))  // 15 minutes slot
+                .patientId(request.getPatientId())
+                .build();
+
+        bookedSlotRepository.save(bookedSlot);
+    }
 
 
 

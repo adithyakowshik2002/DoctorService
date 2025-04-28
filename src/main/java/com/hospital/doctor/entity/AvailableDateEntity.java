@@ -25,7 +25,7 @@ public class AvailableDateEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate availableDate;

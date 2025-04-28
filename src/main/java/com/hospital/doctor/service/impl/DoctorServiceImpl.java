@@ -154,12 +154,13 @@ public class DoctorServiceImpl implements DoctorService {
 
         LocalDate date = LocalDate.parse(availableDateDto.getAvailableDate());
 
-        // Step 1: Create the date entity
-        AvailableDateEntity newDateEntity = new AvailableDateEntity();
-        newDateEntity.setAvailableDate(date);
-        newDateEntity.setDoctor(doctor);
 
-        // Step 2: Map the schedule DTOs to entities
+        AvailableDateEntity newDateEntity = new AvailableDateEntity();
+
+        newDateEntity.setDoctor(doctor);
+        newDateEntity.setAvailableDate(date);
+
+
         if (!CollectionUtils.isEmpty(availableDateDto.getSchedule())) {
             List<AvailableScheduleEntity> scheduleEntities = availableDateDto.getSchedule().stream()
                     .map(availableScheduleDto -> {

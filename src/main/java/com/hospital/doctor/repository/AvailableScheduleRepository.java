@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface AvailableScheduleRepository extends JpaRepository<AvailableScheduleEntity, Long> {
@@ -17,4 +18,14 @@ public interface AvailableScheduleRepository extends JpaRepository<AvailableSche
             @Param("doctorId") Long doctorId,
             @Param("availableDate") LocalDate availableDate
     );
+
+    @Query("SELECT s.scheduleId FROM AvailableScheduleEntity s " +
+            "JOIN s.availableDate d " +
+            "WHERE d.doctor.id = :doctorId " +
+            "AND d.availableDate = :date " +
+            "AND s.availableFrom = :startTime")
+    Long findScheduleIdByDoctorDateTime(@Param("doctorId") Long doctorId,
+                        @Param("date") LocalDate date,
+                        @Param("startTime") LocalTime startTime);
+
 }

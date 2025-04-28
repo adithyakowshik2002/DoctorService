@@ -3,9 +3,14 @@ package com.hospital.doctor.controller;
 
 import com.hospital.doctor.dto.SlotAvailableDto;
 import com.hospital.doctor.service.AvailableDateService;
+import com.hospital.doctor.service.AvailableScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -15,16 +20,27 @@ public class AvailableScheduleController {
     @Autowired
     private AvailableDateService availableDateService;
 
+    @Autowired
+    private AvailableScheduleService availableScheduleService;
+
     @GetMapping("/schedule-dates/doctor/{doctorId}")
     public List<SlotAvailableDto> getAvailableDatesByDoctor(@PathVariable Long doctorId) {
         return availableDateService.getAvailableDatesByDoctorId(doctorId);
     }
 
-//    @GetMapping("/schedule-dates/doctor/{doctorId}/date")
-//    public List<AvailableDateDto> getAvailableDatesByDoctorAndDate(
-//            @PathVariable Long doctorId,
-//            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-//        return availableDateService.getAvailableDatesByDoctorIdAndDate(doctorId, date);
-//    }
+     @GetMapping("/find-schedule-id")
+    public ResponseEntity<Long> findScheduleId(
+            @RequestParam Long doctorId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime) {
+
+        Long scheduleId = availableScheduleService.findScheduleIdByDoctorDateTime(doctorId, date, startTime);
+
+        if (scheduleId != null) {
+            return ResponseEntity.ok(scheduleId);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 

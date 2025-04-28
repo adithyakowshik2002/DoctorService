@@ -2,6 +2,7 @@ package com.hospital.doctor.controller;
 
 import com.hospital.doctor.dto.BookedSlotDTO;
 
+import com.hospital.doctor.dto.SlotBookedDTO;
 import com.hospital.doctor.dto.SlotTimeDto;
 import com.hospital.doctor.service.BookedSlotService;
 
@@ -26,8 +27,6 @@ public class BookedSlotController {
     private final BookedSlotService bookedSlotService;
 
 
-
-
     @GetMapping("/booked-slots")
     public ResponseEntity<List<BookedSlotDTO>> getBookedSlots1(
             @RequestParam Long doctorId,
@@ -36,13 +35,11 @@ public class BookedSlotController {
         return new ResponseEntity<>(bookedSlotService.fetchBookedSlots(doctorId,date), HttpStatus.OK);
     }
 
-//@GetMapping("/available/slots/{doctorId}")
-//    public ResponseEntity<List<BookedSlotDTO>> getAvailableSlots(@PathVariable Long doctorId,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-//
-//        List<BookedSlotDTO> bookedSlotDTOS =bookedSlotService.fetchAvailableSlots(doctorId, date);
-//return new ResponseEntity<>(bookedSlotDTOS,HttpStatus.OK);
-//
-//    }
+    @PostMapping("/book-slot")
+    public ResponseEntity<String> bookSlot(@RequestBody SlotBookedDTO request) {
+        bookedSlotService.bookSlot(request);
+        return ResponseEntity.ok("Slot booked successfully");
+    }
 @GetMapping("/available/slots/timings/{doctorId}")
     public ResponseEntity<List<SlotTimeDto>> getAvailableSlotsTimings(@PathVariable Long doctorId,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
 
