@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class DoctorRequestDto {
     private String languages;
     private Integer experienceYears;
     private String location;
-    private String profileImage;
+    private MultipartFile profileImage;
     @Builder.Default // Base64 or URL
     private List<AvailableScheduleDto> schedules=new ArrayList<>();
 

@@ -28,6 +28,7 @@ public class DoctorEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
     @Column(name = "profile_image")
     private byte[] profileImage;
 

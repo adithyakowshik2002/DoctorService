@@ -1,5 +1,7 @@
 package com.hospital.doctor.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.doctor.dto.*;
 import com.hospital.doctor.service.DoctorService;
 import jakarta.validation.Valid;
@@ -10,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,13 +23,19 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final ObjectMapper mapper;
 
 
     @PostMapping
     //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<DoctorResponseDto> createDoctor(@RequestBody DoctorRequestDto request) {
-        DoctorResponseDto response = doctorService.createDoctor(request);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<DoctorResponseDto> createDoctor(@RequestParam("profileImage")MultipartFile profileImage,@RequestPart("doctorJson") String doctorJson) throws JsonProcessingException {
+
+        DoctorRequestDto request = mapper.readValue(doctorJson,DoctorRequestDto.class);
+
+        request.setProfileImage(profileImage);
+
+        DoctorResponseDto responseDto = doctorService.createDoctor(request);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/getalldoctors")
