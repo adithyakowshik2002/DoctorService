@@ -39,7 +39,7 @@ public class BookedSlotEntity {
     @Column
     private Long patientId;
 
-    @Column(unique = true)
+    @Column
     @NonNull
     private String status;
 

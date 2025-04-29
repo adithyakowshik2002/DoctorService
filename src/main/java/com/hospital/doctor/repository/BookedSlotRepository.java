@@ -25,16 +25,11 @@ public interface BookedSlotRepository extends JpaRepository<BookedSlotEntity, Lo
 
 
 
-    @Query("""
-        SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END
-        FROM BookedSlotEntity b
-        WHERE b.availableScheduleEntity = :schedule
-          AND b.slotDate = :slotDate
-          AND b.slotStartTime = :slotStartTime
-    """)
-    boolean existsByAvailableScheduleEntityAndSlotDateAndSlotStartTime(
-            @Param("schedule") AvailableScheduleEntity schedule,
-            @Param("slotDate") LocalDate slotDate,
-            @Param("slotStartTime") LocalTime slotStartTime
+    boolean existsByAvailableScheduleEntityAndSlotDateAndSlotStartTimeLessThanAndSlotEndTimeGreaterThan(
+            AvailableScheduleEntity schedule,
+            LocalDate slotDate,
+            LocalTime slotEndTime,
+            LocalTime slotStartTime
     );
+
 }

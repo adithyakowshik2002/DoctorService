@@ -41,12 +41,12 @@ public class DoctorServiceImpl implements DoctorService {
         DoctorEntity doctor = doctorMapper.toEntity(request);
         if (request.getProfileImage() != null && !request.getProfileImage().isEmpty()) {
             try {
-                doctor.setProfileImage(Base64.getDecoder().decode(request.getProfileImage()));
+                doctor.setProfileImage(Base64.getDecoder().decode(request.getProfileImage().getBytes()));
             } catch (Exception e) {
                 throw new ImageInvalidException("Invalid Base64 image data");
             }
         }
-        doctor.setRegistrationNumber(UUID.randomUUID());
+        doctor.setRegistrationNumber(request.getRegistrationNumber());
         DoctorEntity saved = doctorRepository.save(doctor);
         return doctorMapper.toResponse(saved);
     }
@@ -118,8 +118,8 @@ public class DoctorServiceImpl implements DoctorService {
             throw new NotFoundException("Doctor with registration number " + registrationNumber + " not found");
         }
 
-        UUID regNumber = UUID.fromString(registrationNumber);
-        DoctorEntity entity = doctorRepository.findByRegistrationNumber(regNumber);
+
+        DoctorEntity entity = doctorRepository.findByRegistrationNumber(registrationNumber);
         if (entity == null) {
             throw new NotFoundException("Doctor with registration number " + registrationNumber + " not found");
         }
@@ -204,7 +204,7 @@ public class DoctorServiceImpl implements DoctorService {
         // Update profile image if present
         if (request.getProfileImage() != null && !request.getProfileImage().isEmpty()) {
             try {
-                existing.setProfileImage(Base64.getDecoder().decode(request.getProfileImage()));
+                existing.setProfileImage(Base64.getDecoder().decode(request.getProfileImage().getBytes()));
             } catch (Exception e) {
                 throw new ImageInvalidException("Invalid Base64 image data");
             }

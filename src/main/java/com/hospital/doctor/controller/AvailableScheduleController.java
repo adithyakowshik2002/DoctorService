@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/doctors")
+
 public class AvailableScheduleController {
 
     @Autowired
@@ -32,9 +33,9 @@ public class AvailableScheduleController {
     public ResponseEntity<Long> findScheduleId(
             @RequestParam Long doctorId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime slotTime) {
 
-        Long scheduleId = availableScheduleService.findScheduleIdByDoctorDateTime(doctorId, date, startTime);
+        Long scheduleId = availableScheduleService.findScheduleIdByDoctorDateTime(doctorId, date, slotTime);
 
         if (scheduleId != null) {
             return ResponseEntity.ok(scheduleId);

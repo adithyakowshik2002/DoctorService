@@ -10,32 +10,38 @@ import org.springframework.data.domain.Pageable;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/doctors")
 @RequiredArgsConstructor
+
 public class DoctorController {
 
     private final DoctorService doctorService;
     private final ObjectMapper mapper;
-
-
     @PostMapping
-    //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<DoctorResponseDto> createDoctor(@RequestParam("profileImage")MultipartFile profileImage,@RequestPart("doctorJson") String doctorJson) throws JsonProcessingException {
-
-        DoctorRequestDto request = mapper.readValue(doctorJson,DoctorRequestDto.class);
-
-        request.setProfileImage(profileImage);
-
-        DoctorResponseDto responseDto = doctorService.createDoctor(request);
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<DoctorResponseDto> createDoctor(@RequestPart("profileImage") MultipartFile profileImage, @RequestPart("doctorJson") String doctorJson)
+    {
+        try
+       {
+        DoctorRequestDto requestDto =mapper.readValue(doctorJson,DoctorRequestDto.class);
+        requestDto.setProfileImage(profileImage);
+        DoctorResponseDto responseDto = doctorService.createDoctor(requestDto);
+        return new ResponseEntity<>(responseDto,HttpStatus.CREATED);
+    }catch (Exception e)
+      {
+        e.printStackTrace();
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
     }
 
     @GetMapping("/getalldoctors")

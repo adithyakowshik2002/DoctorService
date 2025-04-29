@@ -23,9 +23,10 @@ public interface AvailableScheduleRepository extends JpaRepository<AvailableSche
             "JOIN s.availableDate d " +
             "WHERE d.doctor.id = :doctorId " +
             "AND d.availableDate = :date " +
-            "AND s.availableFrom = :startTime")
-    Long findScheduleIdByDoctorDateTime(@Param("doctorId") Long doctorId,
-                        @Param("date") LocalDate date,
-                        @Param("startTime") LocalTime startTime);
+            "AND s.availableFrom <= :slotTime " +
+            "AND s.availableTo > :slotTime")
+    Long findScheduleIdByDoctorDateAndSlotTime(@Param("doctorId") Long doctorId,
+                                               @Param("date") LocalDate date,
+                                               @Param("slotTime") LocalTime slotTime);
 
 }

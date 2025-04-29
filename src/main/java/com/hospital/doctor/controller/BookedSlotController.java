@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/doctors")
 @RestController
 @RequiredArgsConstructor
+
 public class BookedSlotController {
 
 

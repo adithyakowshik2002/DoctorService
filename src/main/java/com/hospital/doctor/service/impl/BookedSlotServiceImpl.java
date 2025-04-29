@@ -80,32 +80,43 @@ private final AvailableScheduleRepository availableScheduleRepository;
 
     @Override
     public void bookSlot(SlotBookedDTO request) {
-
         AvailableScheduleEntity schedule = availableScheduleRepository.findById(request.getScheduleId())
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found for ID: " + request.getScheduleId()));
 
-        // 1. Duplicate check
-        boolean alreadyBooked = bookedSlotRepository.existsByAvailableScheduleEntityAndSlotDateAndSlotStartTime(
+        LocalDate slotDate = LocalDate.parse(request.getSlotDate());
+        LocalTime requestedStartTime = LocalTime.parse(request.getSlotStartTime());
+        LocalTime requestedEndTime = requestedStartTime.plusMinutes(15);  // assuming 15 min slots
+
+
+        if (requestedStartTime.isBefore(schedule.getAvailableFrom()) || requestedEndTime.isAfter(schedule.getAvailableTo())) {
+            throw new IllegalStateException("Requested slot time is outside the doctor's available hours.");
+        }
+
+
+        boolean overlapExists = bookedSlotRepository.existsByAvailableScheduleEntityAndSlotDateAndSlotStartTimeLessThanAndSlotEndTimeGreaterThan(
                 schedule,
-                LocalDate.parse(request.getSlotDate()),
-                LocalTime.parse(request.getSlotStartTime())
+                slotDate,
+                requestedEndTime,     // existing.startTime < requestedEnd
+                requestedStartTime    // existing.endTime > requestedStart
         );
 
-        if (alreadyBooked) {
+        if (overlapExists) {
             throw new IllegalStateException("This slot is already booked. Please choose another time.");
         }
 
-        // 2. Save booking
+
         BookedSlotEntity bookedSlot = BookedSlotEntity.builder()
                 .availableScheduleEntity(schedule)
-                .slotDate(LocalDate.parse(request.getSlotDate()))
-                .slotStartTime(LocalTime.parse(request.getSlotStartTime()))
-                .slotEndTime(LocalTime.parse(request.getSlotStartTime()).plusMinutes(15))  // 15 minutes slot
+                .slotDate(slotDate)
+                .slotStartTime(requestedStartTime)
+                .slotEndTime(requestedEndTime)
                 .patientId(request.getPatientId())
+                .status(request.getStatus())
                 .build();
 
         bookedSlotRepository.save(bookedSlot);
     }
+
 
 
 

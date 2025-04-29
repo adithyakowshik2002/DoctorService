@@ -30,7 +30,8 @@ public class DoctorEntity {
 
     @Lob
     @Column(name = "profile_image")
-    private byte[] profileImage;
+    @Builder.Default
+    private byte[] profileImage=null;
 
     @Column(name = "Doctor_name")
     private String name;
@@ -39,7 +40,7 @@ public class DoctorEntity {
     private String qualifications;
 
     @Column(name = "registration_number", nullable = false, unique = true)
-    private UUID registrationNumber;
+    private String registrationNumber;
 
     @Column(nullable = false)
     private String specialization;

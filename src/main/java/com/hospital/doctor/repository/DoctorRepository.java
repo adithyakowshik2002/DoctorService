@@ -15,7 +15,7 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
 
     List<DoctorEntity> findByName(String name);
 
-    DoctorEntity findByRegistrationNumber(UUID registrationNumber);
+    DoctorEntity findByRegistrationNumber(String registrationNumber);
 
 
 }

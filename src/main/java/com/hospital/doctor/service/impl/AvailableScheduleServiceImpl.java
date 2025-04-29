@@ -15,8 +15,8 @@ public class AvailableScheduleServiceImpl implements AvailableScheduleService {
     private final AvailableScheduleRepository availableScheduleRepository;
 
     @Override
-    public Long findScheduleIdByDoctorDateTime(Long doctorId, LocalDate date, LocalTime startTime) {
-        return availableScheduleRepository.findScheduleIdByDoctorDateTime(doctorId, date, startTime);
+    public Long findScheduleIdByDoctorDateTime(Long doctorId, LocalDate date, LocalTime slotTime) {
+        return availableScheduleRepository.findScheduleIdByDoctorDateAndSlotTime(doctorId, date, slotTime);
     }
 }
 
