@@ -1,11 +1,16 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: DOCTOR-SERVICE
+
   datasource:
     url: jdbc:postgresql://localhost:5432/db_docterservice
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: Akhil429@
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,19 +19,10 @@ spring:
       hibernate:
         format_sql: true
 
-
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
-
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-server:
-  port: 8081
 
 eureka:
   client:
@@ -34,6 +30,10 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
 
 
 

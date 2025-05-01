@@ -22,10 +22,12 @@ public class DoctorResponseDto {
     private String specialization;
     private String languages;
     private Integer experienceYears;
-    private String location;
-    private String profileImage;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String email;
+    private Long userId;
+    //private String location;
+   // private String profileImageBase64;
+   // private LocalDateTime createdAt;
+   // private LocalDateTime updatedAt;
 //    @Builder.Default
 //    private List<ScheduleResponseDto> schedules=new ArrayList<>();
 //    @Builder.Default

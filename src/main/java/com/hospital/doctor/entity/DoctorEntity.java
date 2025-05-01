@@ -30,11 +30,16 @@ public class DoctorEntity {
 
     @Lob
     @Column(name = "profile_image")
+    @Basic(fetch = FetchType.LAZY)
     @Builder.Default
     private byte[] profileImage=null;
 
     @Column(name = "Doctor_name")
     private String name;
+
+    private String email;
+
+    private Long userId;
 
     @Column(columnDefinition = "TEXT")
     private String qualifications;

@@ -18,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
@@ -38,25 +40,41 @@ public class DoctorServiceImpl implements DoctorService {
     //private final AvailableScheduleRepository availableScheduleRepository;
 
     public DoctorResponseDto createDoctor(DoctorRequestDto request) {
-        DoctorEntity doctor = doctorMapper.toEntity(request);
-        if (request.getProfileImage() != null && !request.getProfileImage().isEmpty()) {
-            try {
-                doctor.setProfileImage(Base64.getDecoder().decode(request.getProfileImage().getBytes()));
-            } catch (Exception e) {
-                throw new ImageInvalidException("Invalid Base64 image data");
-            }
+        DoctorEntity doctorEntity = doctorMapper.toEntity(request);
+        MultipartFile imageFile = request.getProfileImage();if(imageFile != null && !imageFile.isEmpty()){    try{
+            byte[] imageBytes = imageFile.getBytes();
+            doctorEntity.setProfileImage(imageBytes);
+        }catch (IOException e){
+            throw  new ImageInvalidException("Faild to read image file"+e.getMessage());
         }
-        doctor.setRegistrationNumber(request.getRegistrationNumber());
-        DoctorEntity saved = doctorRepository.save(doctor);
-        return doctorMapper.toResponse(saved);
+        }
+        doctorEntity.setRegistrationNumber(request.getRegistrationNumber());
+        DoctorEntity saved = doctorRepository.save(doctorEntity);
+        return convertToDto(saved);
+
     }
+
+    public DoctorResponseDto convertToDto(DoctorEntity doctor){
+       return DoctorResponseDto.builder()
+                .id(doctor.getId())
+                .name(doctor.getName())
+                .qualifications(doctor.getQualifications())
+                .registrationNumber(doctor.getRegistrationNumber().toString())
+                .specialization(doctor.getSpecialization())
+                .languages(doctor.getLanguages())
+                .experienceYears(doctor.getExperienceYears())
+                .location(doctor.getLocation())
+                .profileImageBase64(doctor.getProfileImage() != null ? Base64.getEncoder().encodeToString(doctor.getProfileImage()) : null ).createdAt(doctor.getCreatedAt()).updatedAt(doctor.getUpdatedAt()).build();
+    }
+
+
 
 
     @Transactional
     @Override
     public List<DoctorResponseDto> getAllDoctors() {
         List<DoctorResponseDto> result = doctorRepository.findAll().stream()
-                .map(doctorMapper::toResponse).toList();
+                .map(this::convertToDto).toList();
         if (result.isEmpty()) {
             throw new NotFoundException("Doctors not found ask the admin to add the doctors");
         }
@@ -154,36 +172,87 @@ public class DoctorServiceImpl implements DoctorService {
 
         LocalDate date = LocalDate.parse(availableDateDto.getAvailableDate());
 
+        // Step 1: Create the date entity
+        AvailableDateEntity dateEntity = availableDateRepository.findByDoctorIdAndAvailableDate(doctorId,date)
+                .orElseGet(()->{
+                    AvailableDateEntity newDate = new AvailableDateEntity();
+                    newDate.setAvailableDate(date);
+                    newDate.setDoctor(doctor);
+                    newDate.setAvailableScheduleEntity(new ArrayList<>());
+                    return newDate;
+                });
+        // process and validate new time slots
+        List<AvailableScheduleEntity> existingSchedules = dateEntity.getAvailableScheduleEntity();
 
+        availableDateDto.getSchedule().forEach(dto ->{
+            LocalTime from = LocalTime.parse(dto.getAvailableFrom());
+            LocalTime to  = LocalTime.parse(dto.getAvailableTo());
+
+            boolean isOverlap = existingSchedules.stream().anyMatch(existing ->isOverlapping(from,to,existing.getAvailableFrom(),existing.getAvailableTo()));
+
+            if(isOverlap){
+                try {
+                    throw new IllegalAccessException("TIme slot "+from+" overlaps with another slot.");
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            AvailableScheduleEntity schedule = new AvailableScheduleEntity();
+            schedule.setAvailableFrom(from);
+            schedule.setAvailableTo(to);
+            schedule.setAvailableDate(dateEntity);
+            existingSchedules.add(schedule);
+        });
         AvailableDateEntity newDateEntity = new AvailableDateEntity();
-
-        newDateEntity.setDoctor(doctor);
         newDateEntity.setAvailableDate(date);
+        newDateEntity.setDoctor(doctor);
 
 
-        if (!CollectionUtils.isEmpty(availableDateDto.getSchedule())) {
-            List<AvailableScheduleEntity> scheduleEntities = availableDateDto.getSchedule().stream()
-                    .map(availableScheduleDto -> {
-                        LocalTime availableFrom = LocalTime.parse(availableScheduleDto.getAvailableFrom());
-                        LocalTime availableTo = LocalTime.parse(availableScheduleDto.getAvailableTo());
-
-                        //  Setting the availableDate reference properly
-                        AvailableScheduleEntity schedule = new AvailableScheduleEntity();
-                        schedule.setAvailableFrom(availableFrom);
-                        schedule.setAvailableTo(availableTo);
-                        schedule.setAvailableDate(newDateEntity);
-                        return schedule;
-                    })
-                    .toList(); // Java 16+ or use .collect(Collectors.toList()) for older versions
-
-            // Step 3: Set the list into the date entity
-            newDateEntity.setAvailableScheduleEntity(scheduleEntities);
-        }
 
         // Step 4: Save and return DTO
-        AvailableDateEntity savedEntity = availableDateRepository.save(newDateEntity);
+        AvailableDateEntity savedEntity = availableDateRepository.save(dateEntity);
         return availableDateMapper.toResponse(savedEntity);
     }
+    private boolean isOverlapping(LocalTime from, LocalTime to, LocalTime availableFrom, LocalTime availableTo) {
+        return !from.isAfter(availableFrom) && ! to.isBefore(availableFrom);
+    }
+//    public AvailableDateDto setDoctorAvailability(Long doctorId, AvailableDateDto availableDateDto) {
+//        DoctorEntity doctor = doctorRepository.findById(doctorId)
+//                .orElseThrow(() -> new DoctorNameNotFound("Doctor not found with ID: " + doctorId));
+//
+//        LocalDate date = LocalDate.parse(availableDateDto.getAvailableDate());
+//
+//
+//        AvailableDateEntity newDateEntity = new AvailableDateEntity();
+//
+//        newDateEntity.setDoctor(doctor);
+//        newDateEntity.setAvailableDate(date);
+//
+//
+//        if (!CollectionUtils.isEmpty(availableDateDto.getSchedule())) {
+//            List<AvailableScheduleEntity> scheduleEntities = availableDateDto.getSchedule().stream()
+//                    .map(availableScheduleDto -> {
+//                        LocalTime availableFrom = LocalTime.parse(availableScheduleDto.getAvailableFrom());
+//                        LocalTime availableTo = LocalTime.parse(availableScheduleDto.getAvailableTo());
+//
+//                        //  Setting the availableDate reference properly
+//                        AvailableScheduleEntity schedule = new AvailableScheduleEntity();
+//                        schedule.setAvailableFrom(availableFrom);
+//                        schedule.setAvailableTo(availableTo);
+//                        schedule.setAvailableDate(newDateEntity);
+//                        return schedule;
+//                    })
+//                    .toList(); // Java 16+ or use .collect(Collectors.toList()) for older versions
+//
+//            // Step 3: Set the list into the date entity
+//            newDateEntity.setAvailableScheduleEntity(scheduleEntities);
+//        }
+//
+//        // Step 4: Save and return DTO
+//        AvailableDateEntity savedEntity = availableDateRepository.save(newDateEntity);
+//        return availableDateMapper.toResponse(savedEntity);
+//    }
 
 
     @Transactional
@@ -213,5 +282,36 @@ public class DoctorServiceImpl implements DoctorService {
         DoctorEntity updated = doctorRepository.save(existing);
         return doctorMapper.toResponse(updated);
     }
+    @Override
+    @Transactional
+    public DoctorResponseDto findByEmail(String email) throws Exception {
 
+        DoctorEntity entity =doctorRepository.findByEmail(email);
+        if(entity.getEmail().isEmpty())
+        {
+            throw new Exception("the email you entered is not found"+email);
+        }
+
+        DoctorResponseDto response = doctorMapper.toResponse(entity);
+        return response;
+    }
+@Override
+    public DoctorResponseDto getByUserId(Long id){
+        DoctorEntity entity = doctorRepository.findByUserId(id);
+        return doctorMapper.toResponse(entity);
+    }
+
+    @Override
+    public String updateDoctorUserId(Long doctorId, Long userId) {
+        Optional<DoctorEntity> optionalDoctor = doctorRepository.findById(doctorId);
+
+        if (optionalDoctor.isPresent()) {
+            DoctorEntity doctor = optionalDoctor.get();
+            doctor.setUserId(userId);
+            doctorRepository.save(doctor);
+            return "UserId updated successfully";
+        } else {
+            throw new NotFoundException("Doctor not found with ID: " + doctorId);
+        }
+    }
 }

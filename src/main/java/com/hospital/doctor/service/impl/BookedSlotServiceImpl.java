@@ -12,12 +12,12 @@ import com.hospital.doctor.repository.BookedSlotRepository;
 import com.hospital.doctor.service.BookedSlotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -47,16 +47,19 @@ private final AvailableScheduleRepository availableScheduleRepository;
     }
 
 
+
     @Override
     public List<SlotTimeDto> fetchAvailableSlotTimings(Long doctorId, LocalDate date) {
 
-        // 1. Fetch all booked slots
+        //  Fetch all booked slots
         List<BookedSlotEntity> bookedSlots = bookedSlotRepository.findByDoctorIdAndSlotDate(doctorId, date);
-        List<SlotTimeDto> bookedStartTimes = bookedSlots.stream()
-                .map(s->new SlotTimeDto(s.getSlotStartTime().toString()))
-                .toList();
 
-        // 2. Fetch all schedules for the given date
+        // Extract booked start times into a Set<LocalTime> for accurate comparison
+        Set<LocalTime> bookedStartTimes = bookedSlots.stream()
+                .map(BookedSlotEntity::getSlotStartTime)
+                .collect(Collectors.toSet());
+
+        // Fetch all schedules for the given date
         List<AvailableScheduleEntity> schedules = availableScheduleRepository
                 .findByDoctorIdAndAvailableDate(doctorId, date);
 
@@ -68,6 +71,7 @@ private final AvailableScheduleRepository availableScheduleRepository;
 
             // Create slots in 15-minute intervals
             while (current.isBefore(end)) {
+                // Only add slot if it's NOT already booked
                 if (!bookedStartTimes.contains(current)) {
                     availableSlots.add(new SlotTimeDto(current.toString()));
                 }
@@ -78,6 +82,7 @@ private final AvailableScheduleRepository availableScheduleRepository;
         return availableSlots;
     }
 
+
     @Override
     public void bookSlot(SlotBookedDTO request) {
         AvailableScheduleEntity schedule = availableScheduleRepository.findById(request.getScheduleId())
@@ -85,7 +90,7 @@ private final AvailableScheduleRepository availableScheduleRepository;
 
         LocalDate slotDate = LocalDate.parse(request.getSlotDate());
         LocalTime requestedStartTime = LocalTime.parse(request.getSlotStartTime());
-        LocalTime requestedEndTime = requestedStartTime.plusMinutes(15);  // assuming 15 min slots
+        LocalTime requestedEndTime = requestedStartTime.plusMinutes(15).minusSeconds(1);  // assuming 15 min slots
 
 
         if (requestedStartTime.isBefore(schedule.getAvailableFrom()) || requestedEndTime.isAfter(schedule.getAvailableTo())) {
@@ -116,8 +121,5 @@ private final AvailableScheduleRepository availableScheduleRepository;
 
         bookedSlotRepository.save(bookedSlot);
     }
-
-
-
 
 }

@@ -6,12 +6,18 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        // Allow all origins, you can modify this to limit to specific domains like "http://localhost:3000"
-        registry.addMapping("/**").allowedOrigins("http://localhost:5174").allowedMethods("GET", "POST", "PUT", "DELETE");
+public class WebConfig {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")  // apply to all endpoints
+                        .allowedOrigins("*") // allow all origins
+                        .allowedMethods("*") // allow all HTTP methods
+                        .allowedHeaders("*"); // allow all headers
+            }
+        };
     }
-
 }
+

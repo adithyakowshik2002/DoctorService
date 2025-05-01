@@ -3,6 +3,8 @@ package com.hospital.doctor.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.doctor.dto.*;
+import com.hospital.doctor.entity.DoctorEntity;
+import com.hospital.doctor.feign.AuthClient;
 import com.hospital.doctor.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +24,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/doctors")
 @RequiredArgsConstructor
-
+@CrossOrigin(origins = "http://localhost:5173")
 public class DoctorController {
 
+   // private final AuthClient authClient;
     private final DoctorService doctorService;
     private final ObjectMapper mapper;
-    @PostMapping
+    @PostMapping("/creating")
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<DoctorResponseDto> createDoctor(@RequestPart("profileImage") MultipartFile profileImage, @RequestPart("doctorJson") String doctorJson)
     {
         try
        {
+
         DoctorRequestDto requestDto =mapper.readValue(doctorJson,DoctorRequestDto.class);
         requestDto.setProfileImage(profileImage);
         DoctorResponseDto responseDto = doctorService.createDoctor(requestDto);
@@ -45,6 +49,7 @@ public class DoctorController {
     }
 
     @GetMapping("/getalldoctors")
+
     public ResponseEntity<?> getAllDoctors() {
         List<DoctorResponseDto> response = doctorService.getAllDoctors();
 
@@ -124,5 +129,37 @@ public class DoctorController {
         return new ResponseEntity<>(availableScheduleDtoList,
                 HttpStatus.OK);
     }
+    @GetMapping("/email/{email}")
+    public ResponseEntity<DoctorResponseDto> getDoctorByEmail(@PathVariable("email") String email) throws Exception {
+        DoctorResponseDto responseDto = doctorService.findByEmail(email);
+        if(responseDto==null)
+        {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<String> getByUserId(Long id){
+
+            doctorService.getByUserId(id);
+        return new ResponseEntity<>("Success",HttpStatus.OK);
+    }
+    @PutMapping("/update-user-id")
+    @CrossOrigin(origins = "http://localhost:5173")
+    public ResponseEntity<String> updateDoctorUserId(
+            @RequestParam Long doctorId,
+            @RequestParam Long userId
+            ) {
+        try {
+            String message = doctorService.updateDoctorUserId(doctorId, userId);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 
 }

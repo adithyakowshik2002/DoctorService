@@ -26,6 +26,7 @@ public class DoctorRequestDto {
     private Integer experienceYears;
     private String location;
     private MultipartFile profileImage;
+    private String email;
     @Builder.Default // Base64 or URL
     private List<AvailableScheduleDto> schedules=new ArrayList<>();
 

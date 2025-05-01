@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/doctors")
+@CrossOrigin(origins = "http://localhost:5173")
 
 public class AvailableScheduleController {
 
@@ -24,7 +25,7 @@ public class AvailableScheduleController {
     @Autowired
     private AvailableScheduleService availableScheduleService;
 
-    @GetMapping("/schedule-dates/doctor/{doctorId}")
+    @GetMapping("/schedule-dates/{doctorId}")
     public List<SlotAvailableDto> getAvailableDatesByDoctor(@PathVariable Long doctorId) {
         return availableDateService.getAvailableDatesByDoctorId(doctorId);
     }
