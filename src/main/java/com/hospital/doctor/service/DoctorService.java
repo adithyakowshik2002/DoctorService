@@ -26,10 +26,10 @@ public interface DoctorService {
 
     AvailableDateDto setDoctorAvailability(Long doctorId, AvailableDateDto request);
 
-    DoctorResponseDto findByEmail(String email) throws Exception;
+    DoctorDto findByEmail(String email) throws Exception;
 
     List<AvailableDateDto> getAvailableDates(Long doctorId);
 
-    DoctorResponseDto getByUserId(Long id);
+    Long getByUserId(String email);
     String updateDoctorUserId(Long doctorId, Long userId);
 }

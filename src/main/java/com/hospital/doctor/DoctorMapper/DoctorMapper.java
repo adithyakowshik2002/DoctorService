@@ -1,5 +1,6 @@
 package com.hospital.doctor.DoctorMapper;
 
+import com.hospital.doctor.dto.DoctorDto;
 import com.hospital.doctor.dto.DoctorRequestDto;
 import com.hospital.doctor.dto.DoctorResponseDto;
 import com.hospital.doctor.entity.DoctorEntity;
@@ -19,6 +20,10 @@ public class DoctorMapper {
 
     public DoctorResponseDto toResponse(DoctorEntity entity){
         return modelMapper.map(entity,DoctorResponseDto.class);
+    }
+
+    public DoctorDto Response(DoctorEntity entity){
+        return modelMapper.map(entity,DoctorDto.class);
     }
 
 

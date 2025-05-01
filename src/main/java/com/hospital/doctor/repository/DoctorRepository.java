@@ -3,6 +3,8 @@ import com.hospital.doctor.dto.DoctorRequestDto;
 import com.hospital.doctor.dto.DoctorResponseDto;
 import com.hospital.doctor.entity.DoctorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
     DoctorEntity findByRegistrationNumber(String registrationNumber);
     DoctorEntity findByEmail(String email);
 
-    DoctorEntity findByUserId(Long id);
+    @Query("Select dt.id from DoctorEntity dt  where dt.email = :email")
+    Long findByDoctorEmail(@Param("email") String email);
 
 }

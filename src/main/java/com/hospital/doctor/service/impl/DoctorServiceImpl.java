@@ -17,7 +17,6 @@ import com.hospital.doctor.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -284,7 +283,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
     @Override
     @Transactional
-    public DoctorResponseDto findByEmail(String email) throws Exception {
+    public DoctorDto findByEmail(String email) throws Exception {
 
         DoctorEntity entity =doctorRepository.findByEmail(email);
         if(entity.getEmail().isEmpty())
@@ -292,13 +291,14 @@ public class DoctorServiceImpl implements DoctorService {
             throw new Exception("the email you entered is not found"+email);
         }
 
-        DoctorResponseDto response = doctorMapper.toResponse(entity);
+        DoctorDto response = doctorMapper.Response(entity);
         return response;
     }
 @Override
-    public DoctorResponseDto getByUserId(Long id){
-        DoctorEntity entity = doctorRepository.findByUserId(id);
-        return doctorMapper.toResponse(entity);
+    public Long getByUserId(String email){
+
+        return  doctorRepository.findByDoctorEmail(email);
+//        return doctorMapper.Response(entity);
     }
 
     @Override

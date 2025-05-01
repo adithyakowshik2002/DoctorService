@@ -130,8 +130,8 @@ public class DoctorController {
                 HttpStatus.OK);
     }
     @GetMapping("/email/{email}")
-    public ResponseEntity<DoctorResponseDto> getDoctorByEmail(@PathVariable("email") String email) throws Exception {
-        DoctorResponseDto responseDto = doctorService.findByEmail(email);
+    public ResponseEntity<DoctorDto> getDoctorByEmail(@PathVariable("email") String email) throws Exception {
+        DoctorDto responseDto = doctorService.findByEmail(email);
         if(responseDto==null)
         {
             return ResponseEntity.notFound().build();
@@ -140,11 +140,9 @@ public class DoctorController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<String> getByUserId(Long id){
-
-            doctorService.getByUserId(id);
-        return new ResponseEntity<>("Success",HttpStatus.OK);
+    @GetMapping("/user/{email}")
+    public Long getByUserId(@PathVariable String email ){
+        return doctorService.getByUserId(email);
     }
     @PutMapping("/update-user-id")
     @CrossOrigin(origins = "http://localhost:5173")
