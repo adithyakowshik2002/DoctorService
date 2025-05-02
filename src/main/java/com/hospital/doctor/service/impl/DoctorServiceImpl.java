@@ -294,11 +294,10 @@ public class DoctorServiceImpl implements DoctorService {
         DoctorDto response = doctorMapper.Response(entity);
         return response;
     }
-@Override
-    public Long getByUserId(String email){
-
-        return  doctorRepository.findByDoctorEmail(email);
-//        return doctorMapper.Response(entity);
+    @Override
+    public DoctorDto getByUserId(Long id){
+        DoctorEntity entity = doctorRepository.findByUserId(id);
+        return new DoctorDto(entity.getUserId(),entity.getName(),entity.getEmail(),entity.getId());
     }
 
     @Override

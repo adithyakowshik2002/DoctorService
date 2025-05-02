@@ -1,4 +1,5 @@
 package com.hospital.doctor.repository;
+import com.hospital.doctor.dto.DoctorDto;
 import com.hospital.doctor.dto.DoctorRequestDto;
 import com.hospital.doctor.dto.DoctorResponseDto;
 import com.hospital.doctor.entity.DoctorEntity;
@@ -20,7 +21,6 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
     DoctorEntity findByRegistrationNumber(String registrationNumber);
     DoctorEntity findByEmail(String email);
 
-    @Query("Select dt.id from DoctorEntity dt  where dt.email = :email")
-    Long findByDoctorEmail(@Param("email") String email);
+    DoctorEntity findByUserId(@Param("id")Long id);
 
 }

@@ -30,6 +30,6 @@ public interface DoctorService {
 
     List<AvailableDateDto> getAvailableDates(Long doctorId);
 
-    Long getByUserId(String email);
+    DoctorDto getByUserId(Long id);
     String updateDoctorUserId(Long doctorId, Long userId);
 }

@@ -140,10 +140,12 @@ public class DoctorController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @GetMapping("/user/{email}")
-    public Long getByUserId(@PathVariable String email ){
-        return doctorService.getByUserId(email);
+    @GetMapping("/user/{id}")
+    public DoctorDto getByUserId(@PathVariable Long id){
+        return doctorService.getByUserId(id);
     }
+
+
     @PutMapping("/update-user-id")
     @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<String> updateDoctorUserId(
