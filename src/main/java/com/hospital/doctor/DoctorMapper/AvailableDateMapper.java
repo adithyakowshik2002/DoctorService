@@ -1,6 +1,7 @@
 package com.hospital.doctor.DoctorMapper;
 
 import com.hospital.doctor.dto.AvailableDateDto;
+import com.hospital.doctor.dto.SlotAvailableDto;
 import com.hospital.doctor.entity.AvailableDateEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class AvailableDateMapper {
     public List<AvailableDateDto> toResponse(List<AvailableDateEntity> entity){
         return entity.stream().map(this::toResponse).toList();
     }
+
 
 
 }

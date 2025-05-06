@@ -12,7 +12,7 @@ public interface DoctorService {
 
     List<DoctorResponseDto> getAllDoctors();
 
-    DoctorResponseDto getDoctorById(Long id);
+    DoctorDto getDoctorById(Long id);
 
     DoctorResponseDto updateDoctor(Long id, DoctorRequestDto request);
 

@@ -1,24 +1,17 @@
 package com.hospital.doctor.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.doctor.dto.*;
-import com.hospital.doctor.entity.DoctorEntity;
-import com.hospital.doctor.feign.AuthClient;
 import com.hospital.doctor.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -58,9 +51,9 @@ public class DoctorController {
     }
 
     @GetMapping("getbyid/{id}")
-    public ResponseEntity<?> getDoctorById(@PathVariable Long id) {
+    public ResponseEntity<DoctorDto> getDoctorById(@PathVariable Long id) {
 
-        DoctorResponseDto response = doctorService.getDoctorById(id);
+        DoctorDto response = doctorService.getDoctorById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -109,10 +102,10 @@ public class DoctorController {
     }
 
     @GetMapping("/doctor/{id}/available-slots")
-    public ResponseEntity<List<AvailableDateDto>> getAvailableSlots( @PathVariable Long id) {
+    public ResponseEntity<List<AvailableDateDto>> getAvailableDates(@PathVariable Long id) {
         List<AvailableDateDto> availableSlots = doctorService.getAvailableDates(id);
         return ResponseEntity.ok(availableSlots);
-    }
+    }//used
 
     @PostMapping("/doctor/{id}/set-availability")
     public ResponseEntity<AvailableDateDto> setAvailability(
@@ -128,7 +121,7 @@ public class DoctorController {
         List<AvailableDateDto> availableScheduleDtoList=doctorService.getAvailableDates(doctorId);
         return new ResponseEntity<>(availableScheduleDtoList,
                 HttpStatus.OK);
-    }
+    }//no use
     @GetMapping("/email/{email}")
     public ResponseEntity<DoctorDto> getDoctorByEmail(@PathVariable("email") String email) throws Exception {
         DoctorDto responseDto = doctorService.findByEmail(email);

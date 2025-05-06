@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/doctors")
@@ -27,8 +28,12 @@ public class AvailableScheduleController {
 
     @GetMapping("/schedule-dates/{doctorId}")
     public List<SlotAvailableDto> getAvailableDatesByDoctor(@PathVariable Long doctorId) {
-        return availableDateService.getAvailableDatesByDoctorId(doctorId);
-    }
+        List<SlotAvailableDto> availableDates = availableDateService.getAvailableDatesByDoctorId(doctorId);
+
+        LocalDate currentDate = LocalDate.now();
+
+        return availableDates.stream().filter(slot-> !slot.getAvailableDate().isBefore(currentDate)).collect(Collectors.toList());
+    }//no use
 
      @GetMapping("/find-schedule-id")
     public ResponseEntity<Long> findScheduleId(

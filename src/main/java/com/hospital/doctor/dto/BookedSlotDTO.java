@@ -12,10 +12,10 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class BookedSlotDTO
 {
-    private String slotDate;
-    private String slotStartTime;
+    private LocalDate slotDate;
+    private LocalDate slotStartTime;
 
-    private String slotEndTime;
+    private LocalDate slotEndTime;
     private String status;
 }
 

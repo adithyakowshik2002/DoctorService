@@ -82,9 +82,9 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Transactional
     @Override
-    public DoctorResponseDto getDoctorById(Long id) {
+    public DoctorDto getDoctorById(Long id) {
         return doctorRepository.findById(id)
-                .map(doctorMapper::toResponse)
+                .map(doctorMapper::Response)
                 .orElseThrow(() -> new NotFoundException("Doctor with ID " + id + " not found"));
     }
 
@@ -147,17 +147,26 @@ public class DoctorServiceImpl implements DoctorService {
     @Transactional
     @Override
     public List<AvailableDateDto> getAvailableDates(Long doctorId) {
-
         List<AvailableDateEntity> availableDateEntities = availableDateRepository.findByDoctorId(doctorId);
 
         if (availableDateEntities.isEmpty()) {
             throw new SlotNotAvailableException("No available dates found for doctor id: " + doctorId);
         }
 
-        return availableDateMapper.toResponse(availableDateEntities);
+        LocalDate today = LocalDate.now();
 
+        // Filter out past dates (i.e., only include today or future)
+        List<AvailableDateEntity> futureDates = availableDateEntities.stream()
+                .filter(entity -> !entity.getAvailableDate().isBefore(today))
+                .collect(Collectors.toList());
 
+        if (futureDates.isEmpty()) {
+            throw new SlotNotAvailableException("No future dates found for doctor id: " + doctorId);
+        }
+
+        return availableDateMapper.toResponse(futureDates);
     }
+
 
 
 
@@ -169,7 +178,7 @@ public class DoctorServiceImpl implements DoctorService {
         DoctorEntity doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new DoctorNameNotFound("Doctor not found with ID: " + doctorId));
 
-        LocalDate date = LocalDate.parse(availableDateDto.getAvailableDate());
+        LocalDate date = availableDateDto.getAvailableDate();
 
         // Step 1: Create the date entity
         AvailableDateEntity dateEntity = availableDateRepository.findByDoctorIdAndAvailableDate(doctorId,date)
@@ -184,8 +193,8 @@ public class DoctorServiceImpl implements DoctorService {
         List<AvailableScheduleEntity> existingSchedules = dateEntity.getAvailableScheduleEntity();
 
         availableDateDto.getSchedule().forEach(dto ->{
-            LocalTime from = LocalTime.parse(dto.getAvailableFrom());
-            LocalTime to  = LocalTime.parse(dto.getAvailableTo());
+            LocalTime from = dto.getAvailableFrom();
+            LocalTime to  = dto.getAvailableTo();
 
             boolean isOverlap = existingSchedules.stream().anyMatch(existing ->isOverlapping(from,to,existing.getAvailableFrom(),existing.getAvailableTo()));
 

@@ -14,7 +14,6 @@ public class DoctorDto {
     private String qualifications;
     private String email;
     private Long userId;
-
     public DoctorDto(Long userId, String name, String email, Long id) {
     }
 }

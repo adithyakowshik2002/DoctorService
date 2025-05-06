@@ -3,6 +3,7 @@ package com.hospital.doctor.dto;
 import com.hospital.doctor.entity.AvailableScheduleEntity;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.List;
 public class AvailableDateDto {
 
    // private Long id;
-    private String availableDate;
+    private LocalDate availableDate;
 
     private List<AvailableScheduleDto> schedule;
    // private Long doctorId;
