@@ -13,7 +13,7 @@ public interface DoctorService {
     List<DoctorResponseDto> getAllDoctors();
 
     DoctorDto getDoctorById(Long id);
-
+    DoctorResponseDto fetchDoctorById(Long id);
     DoctorResponseDto updateDoctor(Long id, DoctorRequestDto request);
 
     void deleteDoctor(Long id);

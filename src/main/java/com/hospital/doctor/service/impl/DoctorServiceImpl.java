@@ -88,6 +88,14 @@ public class DoctorServiceImpl implements DoctorService {
                 .orElseThrow(() -> new NotFoundException("Doctor with ID " + id + " not found"));
     }
 
+
+    @Transactional
+    @Override
+    public DoctorResponseDto fetchDoctorById(Long id){
+        return doctorRepository.findById(id).map(doctorMapper::toResponse).orElseThrow(() -> new NotFoundException("Doctor with ID " + id + " not found"));
+    }
+
+
     @Transactional
     @Override
     public void deleteDoctor(Long id) {
@@ -180,7 +188,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         LocalDate date = availableDateDto.getAvailableDate();
 
-        // Step 1: Create the date entity
+
         AvailableDateEntity dateEntity = availableDateRepository.findByDoctorIdAndAvailableDate(doctorId,date)
                 .orElseGet(()->{
                     AvailableDateEntity newDate = new AvailableDateEntity();
@@ -218,78 +226,46 @@ public class DoctorServiceImpl implements DoctorService {
 
 
 
-        // Step 4: Save and return DTO
+        //  Save and return DTO
         AvailableDateEntity savedEntity = availableDateRepository.save(dateEntity);
         return availableDateMapper.toResponse(savedEntity);
     }
     private boolean isOverlapping(LocalTime from, LocalTime to, LocalTime availableFrom, LocalTime availableTo) {
         return !from.isAfter(availableFrom) && ! to.isBefore(availableFrom);
     }
-//    public AvailableDateDto setDoctorAvailability(Long doctorId, AvailableDateDto availableDateDto) {
-//        DoctorEntity doctor = doctorRepository.findById(doctorId)
-//                .orElseThrow(() -> new DoctorNameNotFound("Doctor not found with ID: " + doctorId));
-//
-//        LocalDate date = LocalDate.parse(availableDateDto.getAvailableDate());
-//
-//
-//        AvailableDateEntity newDateEntity = new AvailableDateEntity();
-//
-//        newDateEntity.setDoctor(doctor);
-//        newDateEntity.setAvailableDate(date);
-//
-//
-//        if (!CollectionUtils.isEmpty(availableDateDto.getSchedule())) {
-//            List<AvailableScheduleEntity> scheduleEntities = availableDateDto.getSchedule().stream()
-//                    .map(availableScheduleDto -> {
-//                        LocalTime availableFrom = LocalTime.parse(availableScheduleDto.getAvailableFrom());
-//                        LocalTime availableTo = LocalTime.parse(availableScheduleDto.getAvailableTo());
-//
-//                        //  Setting the availableDate reference properly
-//                        AvailableScheduleEntity schedule = new AvailableScheduleEntity();
-//                        schedule.setAvailableFrom(availableFrom);
-//                        schedule.setAvailableTo(availableTo);
-//                        schedule.setAvailableDate(newDateEntity);
-//                        return schedule;
-//                    })
-//                    .toList(); // Java 16+ or use .collect(Collectors.toList()) for older versions
-//
-//            // Step 3: Set the list into the date entity
-//            newDateEntity.setAvailableScheduleEntity(scheduleEntities);
-//        }
-//
-//        // Step 4: Save and return DTO
-//        AvailableDateEntity savedEntity = availableDateRepository.save(newDateEntity);
-//        return availableDateMapper.toResponse(savedEntity);
-//    }
 
 
-    @Transactional
     @Override
+    @Transactional
     public DoctorResponseDto updateDoctor(Long id, DoctorRequestDto request) {
         DoctorEntity existing = doctorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Doctor with ID " + id + " not found"));
 
-        // Update only the specified fields
+        // Update basic fields
         existing.setName(request.getName());
         existing.setQualifications(request.getQualifications());
-        //existing.setRegistrationNumber(request.getRegistrationNumber());
         existing.setSpecialization(request.getSpecialization());
         existing.setLanguages(request.getLanguages());
         existing.setExperienceYears(request.getExperienceYears());
         existing.setLocation(request.getLocation());
 
-        // Update profile image if present
-        if (request.getProfileImage() != null && !request.getProfileImage().isEmpty()) {
+        // Conditionally update profile image only if provided
+        MultipartFile imageFile = request.getProfileImage();
+        if (imageFile != null && !imageFile.isEmpty()) {
             try {
-                existing.setProfileImage(Base64.getDecoder().decode(request.getProfileImage().getBytes()));
-            } catch (Exception e) {
-                throw new ImageInvalidException("Invalid Base64 image data");
+                byte[] imageBytes = imageFile.getBytes();
+                existing.setProfileImage(imageBytes);
+            } catch (IOException e) {
+                throw new ImageInvalidException("Failed to read image file: " + e.getMessage());
             }
         }
+        // Else: retain existing image — no action needed
 
         DoctorEntity updated = doctorRepository.save(existing);
         return doctorMapper.toResponse(updated);
     }
+
+
     @Override
     @Transactional
     public DoctorDto findByEmail(String email) throws Exception {

@@ -17,14 +17,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/doctors")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class DoctorController {
 
-   // private final AuthClient authClient;
+
     private final DoctorService doctorService;
     private final ObjectMapper mapper;
     @PostMapping("/creating")
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<DoctorResponseDto> createDoctor(@RequestPart("profileImage") MultipartFile profileImage, @RequestPart("doctorJson") String doctorJson)
     {
         try
@@ -42,7 +40,6 @@ public class DoctorController {
     }
 
     @GetMapping("/getalldoctors")
-
     public ResponseEntity<?> getAllDoctors() {
         List<DoctorResponseDto> response = doctorService.getAllDoctors();
 
@@ -56,16 +53,30 @@ public class DoctorController {
         DoctorDto response = doctorService.getDoctorById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/get-doctor/{id}")
+    public ResponseEntity<DoctorResponseDto> getDoctor(@PathVariable Long id) {
 
-    @PutMapping("update/{id}")
-    //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateDoctor(
-            @PathVariable Long id,
-            @Valid @RequestBody DoctorRequestDto request) {
-
-        DoctorResponseDto response = doctorService.updateDoctor(id, request);
+        DoctorResponseDto response = doctorService.fetchDoctorById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<DoctorResponseDto> updateDoctor(
+            @PathVariable Long id,
+            @RequestPart("doctorJson") String doctorJson,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+        try {
+            DoctorRequestDto requestDto = mapper.readValue(doctorJson, DoctorRequestDto.class);
+            requestDto.setProfileImage(profileImage); // Can be null or empty
+            DoctorResponseDto responseDto = doctorService.updateDoctor(id, requestDto);
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 
     @DeleteMapping("delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -140,7 +151,6 @@ public class DoctorController {
 
 
     @PutMapping("/update-user-id")
-    @CrossOrigin(origins = "http://localhost:5173")
     public ResponseEntity<String> updateDoctorUserId(
             @RequestParam Long doctorId,
             @RequestParam Long userId
@@ -152,7 +162,6 @@ public class DoctorController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
 
 
 }

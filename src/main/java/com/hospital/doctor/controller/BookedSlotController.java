@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/doctors")
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class BookedSlotController {
 
 
