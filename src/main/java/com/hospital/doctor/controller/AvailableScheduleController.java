@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,11 +31,16 @@ public class AvailableScheduleController {
 
         LocalDate currentDate = LocalDate.now();
 
-        return availableDates.stream().filter(slot-> !slot.getAvailableDate().isBefore(currentDate)).collect(Collectors.toList());
-    }//no use
+        return availableDates.stream()
+                .filter(slot -> !slot.getAvailableDate().isBefore(currentDate))
+                .sorted(Comparator.comparing(SlotAvailableDto::getAvailableDate)) // Sort by availableDate ascending
+                .toList();
+    }
 
-     @GetMapping("/find-schedule-id")
+
+    @GetMapping("/find-schedule-id")
     public ResponseEntity<Long> findScheduleId(
+
             @RequestParam Long doctorId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime slotTime) {

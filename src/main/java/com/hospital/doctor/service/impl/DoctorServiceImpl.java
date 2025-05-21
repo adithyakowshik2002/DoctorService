@@ -57,6 +57,7 @@ public class DoctorServiceImpl implements DoctorService {
        return DoctorResponseDto.builder()
                 .id(doctor.getId())
                 .name(doctor.getName())
+               .email(doctor.getEmail())
                 .qualifications(doctor.getQualifications())
                 .registrationNumber(doctor.getRegistrationNumber().toString())
                 .specialization(doctor.getSpecialization())

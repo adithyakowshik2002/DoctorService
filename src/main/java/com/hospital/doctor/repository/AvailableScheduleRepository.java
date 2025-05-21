@@ -19,6 +19,8 @@ public interface AvailableScheduleRepository extends JpaRepository<AvailableSche
             @Param("availableDate") LocalDate availableDate
     );
 
+    List<AvailableScheduleEntity>  findByAvailableDateId(Long availabledateId);
+
     @Query("SELECT s.scheduleId FROM AvailableScheduleEntity s " +
             "JOIN s.availableDate d " +
             "WHERE d.doctor.id = :doctorId " +

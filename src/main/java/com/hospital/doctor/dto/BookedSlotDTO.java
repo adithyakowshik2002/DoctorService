@@ -12,6 +12,8 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class BookedSlotDTO
 {
+    private Long bookedSlotId;
+    private Long patientId;
     private LocalDate slotDate;
     private LocalDate slotStartTime;
 
